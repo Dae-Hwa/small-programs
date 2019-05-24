@@ -1,0 +1,111 @@
+<head>
+    <script>
+        // 무작위 정수 생성
+        function nextRandomInteger(limit) {
+            return Math.round((Math.random()) * limit);
+        }
+
+        // 무작위 알파벳 리턴
+        var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        function randomAlphabet() {    
+            return alphabet.charAt(nextRandomInteger(25));
+        }
+
+        // 무작위 속도 생성
+        function randomSpeed(maxSpeed) {
+            return Math.random() * maxSpeed - Math.random() * maxSpeed;
+        }
+    </script>
+    <script>
+        var canvasWidth = 700;
+        var canvasHeight = 500;
+        function MovingText() {
+            //위치와 속도
+            this.x = nextRandomInteger(canvasWidth);
+            this.y = nextRandomInteger(canvasHeight);
+            this.vX = randomSpeed(10);
+            this.vY = randomSpeed(10);
+
+            // 문서 객체 생성
+            this.h1 = document.createElement("h1");
+            this.h1.innerHTML = randomAlphabet();
+            this.h1.style.position = "absolute";
+            this.h1.addEventListener("mouseover", removeText)
+            document.body.appendChild(this.h1);
+        }
+        MovingText.prototype.move = function () {
+            if (this.x < 0 || this.x > canvasWidth) {
+                this.vX *= -1;
+            }
+            if (this.y < 0 || this.y > canvasHeight) {
+                this.vY *= -1;
+            }
+
+            this.x += this.vX;
+            this.y += this.vY;
+
+            this.h1.style.left = this.x + "px";
+            this.h1.style.top = this.y + "px";
+        }
+    </script>
+    <script>
+        function removeText(e) {
+            var text = e.currentTarget;
+            var score = document.getElementById("score");
+
+            text.remove();
+            addScore();
+            if (Number(score.textContent) == 100) {
+                stopScore();
+            }
+        }
+
+        var countScore = setInterval(function () {
+            var timer = document.getElementById("timer");
+            var time = Number(timer.textContent);
+            timer.textContent = (time + 0.1).toFixed(1);
+        }, 100);
+
+        function addScore(){
+            score.textContent = Number(score.textContent) + 1;
+        }
+        function stopScore() {
+            clearInterval(countScore);
+            setTimeout(function () {
+                alert("당신의 기록 : " + document.getElementById("timer").textContent + "초")
+            }, 1);
+        }
+
+        function createMovingText(){
+            var movingTexts = [];
+
+            for (var i = 0; i < 100; i++) {
+                movingTexts.push(new MovingText());
+            }
+
+            setInterval(function () {
+                for (var i in movingTexts) {
+                    movingTexts[i].move();
+                }
+            }, 1000 / 30)
+        }
+
+
+    </script>
+    <script>
+
+        window.onload = function () {
+            createMovingText()
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <div>
+        <h1 id="score" style="text-align:right">0</h1>
+        <h1 id="timer" style="text-align:right">0</h1>
+    </div>
+
+</body>
